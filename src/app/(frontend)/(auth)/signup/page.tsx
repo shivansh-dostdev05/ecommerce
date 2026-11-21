@@ -37,6 +37,7 @@ export default function SignupPage() {
 
       if (!signupResponse.ok) {
         setError('Account Creation failed.')
+        return 
       }
 
       const loginResponse = await fetch('/api/customers/login', {
@@ -55,6 +56,7 @@ export default function SignupPage() {
 
       if (!loginResponse.ok) {
         setError('Account created but login failed.')
+        return 
       }
 
       router.push('/')

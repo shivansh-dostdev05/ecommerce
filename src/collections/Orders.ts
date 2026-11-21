@@ -1,5 +1,5 @@
-
-import type { CollectionConfig, CollectionSlug } from 'payload'
+import type { CollectionConfig } from 'payload'
+import { isAdmin, isCustomer, adminOrCustomer } from '@/access'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -9,11 +9,18 @@ export const Orders: CollectionConfig = {
     defaultColumns: ['customer', 'total', 'status', 'createdAt'],
   },
 
+  access: {
+    create: isCustomer,
+    read: adminOrCustomer('customer'),
+    update: isAdmin,
+    delete: isAdmin,
+  },
+
   fields: [
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers' as CollectionSlug,
+      relationTo: 'customers',
       required: true,
     },
     {
@@ -50,6 +57,7 @@ export const Orders: CollectionConfig = {
     {
       name: 'status',
       type: 'select',
+      required: true,
       defaultValue: 'pending',
       options: [
         {

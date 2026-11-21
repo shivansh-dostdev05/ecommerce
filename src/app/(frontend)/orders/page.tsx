@@ -1,46 +1,23 @@
 import Link from 'next/link'
-import { headers } from 'next/headers'
-import { getPayload } from 'payload'
-
-import config from '@/payload.config'
+import { requireCustomer, getPayloadClient } from '@/lib/payload'
+import { formatPrice } from '@/lib/format'
+import { populated } from '@/lib/relations'
 
 export default async function OrdersPage() {
-  const payload = await getPayload({ config })
-
-  const { user } = await payload.auth({
-    headers: await headers(),
-  })
-
-  if (!user) {
-    return (
-      <main className="mx-auto max-w-5xl px-6 py-20 text-center">
-        <h1 className="text-3xl font-bold">My Orders</h1>
-
-        <p className="mt-4 text-gray-600">
-          Please log in to view your orders.
-        </p>
-
-        <Link
-          href="/login"
-          className="mt-6 inline-block rounded-lg bg-black px-6 py-3 text-white hover:bg-gray-800"
-        >
-          Login
-        </Link>
-      </main>
-    )
-  }
+  const customer = await requireCustomer('/orders')
+  const payload = await getPayloadClient()
 
   const { docs: orders } = await payload.find({
     collection: 'orders',
     where: {
       customer: {
-        equals: user.id,
+        equals: customer.id,
       },
     },
     sort: '-createdAt',
     depth: 1,
     overrideAccess: false,
-    user,
+    user: customer,
   })
 
   return (
@@ -102,10 +79,7 @@ export default async function OrdersPage() {
 
                 <div className="mt-5 space-y-4">
                   {order.products.map((item, index) => {
-                    const product =
-                      typeof item.product === 'object'
-                        ? item.product
-                        : null
+                    const product = populated(item.product)
 
                     return (
                       <div
@@ -123,11 +97,7 @@ export default async function OrdersPage() {
                         </div>
 
                         <p className="font-medium">
-                          {new Intl.NumberFormat('en-IN', {
-                            style: 'currency',
-                            currency: 'INR',
-                            maximumFractionDigits: 0,
-                          }).format(item.price * item.quantity)}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                     )
@@ -140,11 +110,7 @@ export default async function OrdersPage() {
                   </span>
 
                   <span className="text-lg font-bold">
-                    {new Intl.NumberFormat('en-IN', {
-                      style: 'currency',
-                      currency: 'INR',
-                      maximumFractionDigits: 0,
-                    }).format(order.total)}
+                    {formatPrice(order.total)}
                   </span>
                 </div>
               </article>

@@ -5,6 +5,8 @@ import { getPayload } from 'payload'
 
 import config from '@/payload.config'
 import AddToCartButton from '../../components/AddToCartButton'
+import { formatPrice } from '@/lib/format'
+import { populated } from '@/lib/relations'
 
 type ProductPageProps = {
   params: Promise<{slug: string}>
@@ -30,24 +32,11 @@ export default async function ProductPage({
 
   const product = products[0]
 
-  if (!product) {
-    notFound()
-  }
+  if (!product) notFound()
 
-  const image =
-    typeof product.image === 'object' &&
-    product.image !== null
-      ? product.image
-      : null
+  const image = populated(product.image)
 
   const imageUrl = image?.url ?? null
-
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(price)
 
   return (
     <main className="min-h-screen bg-white px-6 py-12">
