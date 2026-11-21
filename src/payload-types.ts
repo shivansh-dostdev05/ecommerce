@@ -258,7 +258,7 @@ export interface Order {
     id?: string | null;
   }[];
   total: number;
-  status?: ('pending' | 'delivered' | 'cancelled') | null;
+  status: 'pending' | 'delivered' | 'cancelled';
   updatedAt: string;
   createdAt: string;
 }

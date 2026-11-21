@@ -1,5 +1,5 @@
-
 import type { CollectionConfig } from 'payload'
+import { isAdmin, anyone } from '@/access'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -10,10 +10,10 @@ export const Categories: CollectionConfig = {
   },
 
   access: {
-    read: () => true,
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    read: anyone,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin
   },
 
   fields: [

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { notFound } from 'next/navigation'
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -18,15 +19,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const category = docs[0]
 
-  if (!category){
-    throw new Error("not found");
-  }
+  if (!category) notFound();
 
   const { docs: products } = await payload.find({
     collection: 'products',
     where: {
-      category: {
-        equals: category.id,
+      categories: {
+        in: [category.id],
       },
     },
     depth: 1,

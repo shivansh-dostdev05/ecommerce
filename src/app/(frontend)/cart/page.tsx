@@ -7,6 +7,7 @@ import { getCart, removeFromCart, updateCartQuantity, type CartItem } from '../a
 
 import PlaceOrderButton from '../components/PlaceOrderButton'
 //import RemoveCartButton from '../components/RemoveFromCartButton'
+import { formatPrice } from '@/lib/format'
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([])
@@ -31,12 +32,6 @@ export default function CartPage() {
     0,
   )
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(price)
 
   if (cart.length === 0) {
     return (

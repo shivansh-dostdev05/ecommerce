@@ -1,5 +1,6 @@
 
 import type { CollectionConfig } from 'payload'
+import { isAdmin, anyone } from '@/access'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -7,6 +8,13 @@ export const Products: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'price'],
+  },
+
+  access: {
+    read: anyone,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin,
   },
 
   fields: [
@@ -35,10 +43,10 @@ export const Products: CollectionConfig = {
       required: true,
     },
     {
-  name: 'image',
-  type: 'upload',
-  relationTo: 'media',
-  required: true,
-},
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
   ],
 }
